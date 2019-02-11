@@ -1,0 +1,8 @@
+extends:
+  - mavu
+  - mavu/jest
+rules:
+  # when running plain in browser this is needed
+  no-console: off
+  comma-dangle: off
+  no-shadow: 1
