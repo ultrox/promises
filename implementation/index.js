@@ -5,7 +5,7 @@ class NanoPromse {
 
     const resolve = res => {
       this.state = 'FULFILED'
-      this.stack[0].onSuccess(res)
+      this.stack[0].onSuccess(res) // on purpuse fragile
     }
 
     const reject = err => {
@@ -13,13 +13,17 @@ class NanoPromse {
       this.stack[0].onError(err)
     }
 
-    executor(resolve, reject)
+    try {
+      executor(resolve, reject)
+    } catch (err) {
+      reject(err)
+    }
   }
-  // .then
+  // .then method is stack
   addOnStack(onSuccess, onError) {
     this.stack.push({ onSuccess, onError })
   }
-}
+} // end Promise Implementation
 
 const executor = (resolve, reject) => {
   setTimeout(function() {
@@ -27,14 +31,15 @@ const executor = (resolve, reject) => {
   }, 3000)
 }
 
-const mp = new NanoPromse(executor)
+const np = new NanoPromse(executor)
+console.log(np, 'np')
 
-const onSuccess = (data) => {
-  console.log(data, mp.state)
+const onSuccess = data => {
+  console.log(data, np.state)
 }
-const onError = (err) => {
-  console.log(err, mp.state)
+const onError = err => {
+  console.log(err, np.state)
 }
 
-mp.addOnStack(onSuccess, onError)
-
+np.addOnStack(onSuccess, onError)
+// np.then(onSuccess, onError) // alternative in real Promise lib
